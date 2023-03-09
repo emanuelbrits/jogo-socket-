@@ -23,7 +23,9 @@ while (casa[0] !== tesouro[0] && casa[1] !== tesouro[1]) {
     if (verificar(opcao)) {
 
         console.clear()
-        if (casa[0] < tesouro[0] && casa[1] < tesouro[1]) {
+        if (mapa[casa[0]][casa[1]] == "X") {
+            console.log("Casa já escolhida, Digite outra.");
+        } else if (casa[0] < tesouro[0] && casa[1] < tesouro[1]) {
             console.log("Você Errou");
             console.log("Mais para baixo e para a direita");
         } else if (casa[0] > tesouro[0] && casa[1] < tesouro[1]) {
