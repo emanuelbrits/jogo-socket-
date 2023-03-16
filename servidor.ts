@@ -38,14 +38,17 @@ function gerarMapa(i: number[], j: number[], mp: string[][], p?: number, o?: num
 
   console.log(`Tesouro: [${i[rodada]}][${j[rodada]}]`)
 
-  imprime = '  0 1 2 3 4 5 6 7 8 9\n0'
+  imprime = '0 1 2 3 4 5 6 7 8 9\n'
   for(let y = 0; y < 10; y++) {
     for (let u = 0; u < 10; u++) {
-      imprime += ` ${mp[y][u]}`
+      if(u == 0) {
+        imprime += `${mp[y][u]}`
+      } else {
+        imprime += ` ${mp[y][u]}`
+      }
     }
-    if(y +1 < 10) {
-      imprime+=`\n${y+1}`
-    }
+
+    imprime += ` ${y}\n`
   }
 
   console.log("Mapa atual:");
@@ -171,7 +174,7 @@ function processaJogada(jogada: string, i: number[], j: number[]) {
       } else {
         gerarMapa(i, j, mapaatual, x, y)
         enviaMapa()
-        enviaMensagem(`${jogadorAtual.nome} errou... Próximo jogador`);
+        enviaMensagem(`\n${jogadorAtual.nome} errou... Próximo jogador`);
       }
   }
   else {
