@@ -21,27 +21,36 @@ function gerarNumero() {
   return numero
 }
 
-function gerarMapa(i: number[], j: number[]) {
-  const mapa: string[][] = [];
+let mapaatual = 
+[['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']];
 
-  for (let k = 0; k < TAMANHO_MAPA; k++) {
-    mapa[k] = [];
-    for (let l = 0; l < TAMANHO_MAPA; l++) {
-      mapa[k][l] = "O";
-    }
+let imprime = ''
+
+function gerarMapa(i: number[], j: number[], mp: string[][], p?: number, o?: number) {
+
+  if(p && o) {
+    mp[p][o] = 'X'
   }
 
   console.log(`Tesouro: [${i[rodada]}][${j[rodada]}]`)
 
-  console.log("Mapa atual:");
-  for (let m = 0; m < TAMANHO_MAPA; m++) {
-    console.log(mapa[m].join(" "));
+  imprime = '  0 1 2 3 4 5 6 7 8 9\n0'
+  for(let y = 0; y < 10; y++) {
+    for (let u = 0; u < 10; u++) {
+      imprime += ` ${mp[y][u]}`
+    }
+    if(y +1 < 10) {
+      imprime+=`\n${y+1}`
+    }
   }
 
-  return mapa;
+  console.log("Mapa atual:");
+  console.log(imprime);
 }
-
-let mapa: string[][] | null = null;
 
 const server = net.createServer((socket: net.Socket) => {
   console.log("Novo jogador conectado!");
@@ -127,7 +136,7 @@ function proximaRodada(i: number[], j: number[]) {
   if (contadorRodadas > maxRodadas) {
     encerraPartida();
   } else {
-    mapa = gerarMapa(i, j);
+    gerarMapa(i, j, mapaatual);
     enviaMapa();
     enviaMensagem(`Começando a rodada ${contadorRodadas}...`);
     enviaPlacar();
@@ -137,9 +146,7 @@ function proximaRodada(i: number[], j: number[]) {
 function enviaMapa() {
   jogadores.forEach((jogador) => {
     jogador.socket.write("Mapa:\n");
-    for (let linha of mapa!) {
-      jogador.socket.write(linha.join(" ") + "\n");
-    }
+    jogador.socket.write(imprime);
   });
 }
 
@@ -148,14 +155,22 @@ function processaJogada(jogada: string, i: number[], j: number[]) {
   const x = Number(jogadaCoords[0]);
   const y = Number(jogadaCoords[1]);
 
-  if (x >= 0 && x < mapa!.length && y >= 0 && y < mapa![0].length) {
+  if (x >= 0 && x < 10 && y >= 0 && y < 10) {
       if (x === i[rodada] && y === j[rodada]) {
         jogadorAtual.pontos++;
         rodada++
+        mapaatual = 
+        [['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']];
         enviaMensagem(`${jogadorAtual.nome} acertou o tesouro e ganhou um ponto!`);
         enviaPlacar()
         proximaRodada(i, j)
       } else {
+        gerarMapa(i, j, mapaatual, x, y)
+        enviaMapa()
         enviaMensagem(`${jogadorAtual.nome} errou... Próximo jogador`);
       }
   }
