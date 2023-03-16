@@ -1,4 +1,5 @@
 import * as net from "net";
+const fs = require('fs')
 
 interface Jogador {
   nome: string;
@@ -14,9 +15,6 @@ const TAMANHO_MAPA = 10;
 const i = [gerarNumero(), gerarNumero(), gerarNumero(), gerarNumero(), gerarNumero()]
 const j = [gerarNumero(), gerarNumero(), gerarNumero(), gerarNumero(), gerarNumero()]
 
-console.log(i)
-console.log(j)
-
 function gerarNumero() {
   let numero = Math.floor(Math.random() * TAMANHO_MAPA);
 
@@ -29,7 +27,7 @@ function gerarMapa(i: number[], j: number[]) {
   for (let k = 0; k < TAMANHO_MAPA; k++) {
     mapa[k] = [];
     for (let l = 0; l < TAMANHO_MAPA; l++) {
-      mapa[k][l] = "X";
+      mapa[k][l] = "O";
     }
   }
 
@@ -89,7 +87,21 @@ function iniciaPartida() {
   proximaRodada(i, j);
 }
 
-function encerraPartida() {
+function encerraPartida() { 
+  let txt = "";
+  if (jogadores[0] && jogadores[1]) {
+    txt = `\n${jogadores[0].nome} ${jogadores[0].pontos} - ${jogadores[1].pontos} ${jogadores[1].nome}`
+  }
+
+  fs.appendFile('historico.txt', txt, (err) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+  })
+
+  const conteudoArquivo = fs.readFileSync('historico.txt', 'utf8')
+
   console.log("Encerrando partida...");
   let vencedor: Jogador | null = null;
   for (let jogador of jogadores) {
@@ -97,14 +109,16 @@ function encerraPartida() {
       vencedor = jogador;
     }
   }
+
   if (vencedor) {
-    enviaMensagem(`Parabéns, ${vencedor.nome}! Você venceu a partida com ${vencedor.pontos} pontos.`);
+    enviaMensagem(`\n\nParabéns, ${vencedor.nome}! Você venceu a partida com ${vencedor.pontos} pontos.\n\nHistórico de jogos: \n${conteudoArquivo}`);
   } else {
     enviaMensagem("A partida terminou em empate.");
   }
   jogadores.forEach((jogador) => {
     jogador.socket.end();
   });
+
   jogadores.length = 0;
 }
 
