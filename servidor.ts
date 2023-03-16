@@ -123,7 +123,7 @@ function encerraPartida() {
   }
 
   if (vencedor) {
-    enviaMensagem(`\n\nParabéns, ${vencedor.nome}! Você venceu a partida com ${vencedor.pontos} pontos.\n\nHistórico de jogos: \n${conteudoArquivo}`);
+    enviaMensagem(`\n\nParabéns, ${vencedor.nome}! Você venceu a partida com ${vencedor.pontos} pontos.\n\nHistórico de jogos: \n${conteudoArquivo}\n${jogadores[0].nome} ${jogadores[0].pontos} - ${jogadores[1].pontos} ${jogadores[1].nome}`);
   } else {
     enviaMensagem("A partida terminou em empate.");
   }
